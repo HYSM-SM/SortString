@@ -2,7 +2,6 @@
 #include <string>
 #include <vector>
 #include <algorithm> // для sort,find_if
-#include <utility> // для pair
 
 using namespace std;
 
@@ -64,30 +63,10 @@ vector<vector<string>> split_into_subvectors(vector<string> content)
 
 void sort_numbers(vector<string>& content,char comparison)
 {
-    vector<pair<string,double>> numbers; // first (string number) second (double number)
-    //pair - структура данных которая хранит в себе
-    // 2 любых типа данных в first и second
-    
-    for(int i = 0; i < content.size(); i++)
-    {
-        numbers.push_back( make_pair<string,double>( string(content[i]),stod(content[i])) );
-        //stod(string to double) - конвертирует string в double
-        //make_pair - создает pair
-    }
-    
     if(comparison == DECREASE)
-        sort(numbers.begin(),numbers.end(),[](pair<string,double> f,pair<string,double> s){ return f.second > s.second; });
+        sort(content.begin(),content.end(),[](string f,string s) { return stod(f) > stod(s); });
     else if(comparison == INCREASE)
-        sort(numbers.begin(),numbers.end(),[](pair<string,double> f,pair<string,double> s){ return f.second < s.second; });
-    //sort - использует трехкратную гибридную технику сортировки под названием Introsort . 
-    //Это комбинация быстрой сортировки , сортировки кучи и сортировки вставками.
-        
-    for(int i = 0; i < numbers.size(); i++)
-    {
-        content[i] = numbers[i].first;
-        //изменяем орининальный vector
-        //на отсортированный
-    }
+        sort(content.begin(),content.end(),[](string f,string s) { return stod(f) < stod(s); });
 }
 
 void sort_words(vector<string>& words,char comparison)
@@ -99,54 +78,25 @@ void sort_words(vector<string>& words,char comparison)
     //обычная сортировка по алфавиту
 }
 
-vector<string> get_numbers_from_string(vector<string> content)
+double get_numb(string str)
 {
-    vector<string> numbers;
-    string numb;
-    for(int i = 0; i < content.size(); i++)
+    string numb = "";
+    auto begin = find_if(str.begin(),str.end(),[](char c) { return (c >= '0' && c <= '9');});
+    auto end = find_if(begin,str.end(),[](char c) { return (c < '0' || c > '9');});
+    for(;begin != end;begin++)
     {
-        auto begin = find_if(content[i].begin(),content[i].end(),[](char c) { return (c >= '0' && c <= '9');});
-        //указатель на первую цифру в строке
-        auto end = find_if(begin,content[i].end(),[](char c) { return (c < '0' || c > '9');});
-        //указатель на последнюю цифру в строке
-        for(;begin != end;begin++)
-        {
-            numb +=  *begin;
-            //записует число
-        }
-        numbers.push_back(numb);
-        numb = "";
+        numb +=  *begin;
+        //записует число
     }
-    return numbers;
+    return (str.size() > 0) ? stod(numb) : 0 ;
 }
 
 void sort_mixed_words_and_numbers(vector<string>& content,char comparison)
 {
-    vector<string> numbers = get_numbers_from_string(content);
-    vector<pair<string,double>> string_and_numbers; // first (string with numbers) second (only numbers)
-    //pair - структура данных которая хранит в себе
-    // 2 любых типа данных в first и second
-    
-    for(int i = 0; i < numbers.size(); i++)
-    {
-        string_and_numbers.push_back(make_pair<string,double>(string(content[i]),stod(numbers[i])));
-        //stod(string to double) - конвертирует строку в double
-        //make_pair - создает pair
-    }
-    
     if(comparison == DECREASE)
-        sort(string_and_numbers.begin(),string_and_numbers.end(),[](pair<string,double> f,pair<string,double> s) { return f.second > s.second; });
+        sort(content.begin(),content.end(),[](string f,string s) { return get_numb(f) > get_numb(s); });
     else if(comparison == INCREASE)
-        sort(string_and_numbers.begin(),string_and_numbers.end(),[](pair<string,double> f,pair<string,double> s) { return f.second < s.second; });
-    //sort - использует трехкратную гибридную технику сортировки под названием Introsort. 
-    //Это комбинация быстрой сортировки , сортировки кучи и сортировки вставками.
-    
-    for(int i = 0; i < string_and_numbers.size(); i++)
-    {
-        content[i] = string_and_numbers[i].first;
-        //изменяем орининальный vector
-        //на отсортированный
-    }
+        sort(content.begin(),content.end(),[](string f,string s) { return get_numb(f) < get_numb(s); });
 }
 
 vector<string> concatenation_subvectors(vector<vector<string>> word_mix_numb)
