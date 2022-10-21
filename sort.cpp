@@ -62,36 +62,32 @@ vector<vector<string>> split_into_subvectors(vector<string> content)
     return separator;
 }
 
-void sort_numbers(vector<string>& character_numbers,char comparison)
+void sort_numbers(vector<string>& content,char comparison)
 {
-    vector<pair<double,int>> digit_numbers; // first number second index
+    vector<pair<string,double>> numbers; // first (string number) second (double number)
     //pair - структура данных которая хранит в себе
     // 2 любых типа данных в first и second
     
-    for(int i = 0; i < character_numbers.size(); i++)
+    for(int i = 0; i < content.size(); i++)
     {
-        digit_numbers.push_back( make_pair<double,int>( stod(character_numbers[i]),int(i) ) );
+        numbers.push_back( make_pair<string,double>( string(content[i]),stod(content[i])) );
         //stod(string to double) - конвертирует string в double
         //make_pair - создает pair
     }
     
     if(comparison == DECREASE)
-        sort(digit_numbers.begin(),digit_numbers.end(),[](pair<double,int> f,pair<double,int> s){ return f.first > s.first; });
+        sort(numbers.begin(),numbers.end(),[](pair<string,double> f,pair<string,double> s){ return f.second > s.second; });
     else if(comparison == INCREASE)
-        sort(digit_numbers.begin(),digit_numbers.end(),[](pair<double,int> f,pair<double,int> s){ return f.first < s.first; });
+        sort(numbers.begin(),numbers.end(),[](pair<string,double> f,pair<string,double> s){ return f.second < s.second; });
     //sort - использует трехкратную гибридную технику сортировки под названием Introsort . 
     //Это комбинация быстрой сортировки , сортировки кучи и сортировки вставками.
         
-    vector<string> sorted;
-    for(int i = 0; i < digit_numbers.size(); i++)
+    for(int i = 0; i < numbers.size(); i++)
     {
-        sorted.push_back(character_numbers[digit_numbers[i].second]);
-        //добавляем в вектор sorted
-        //числа из оригинального вектора
-        //по отсортированным индексам
+        content[i] = numbers[i].first;
+        //изменяем орининальный vector
+        //на отсортированный
     }
-    character_numbers = sorted;
-    //присваиваем отсортированные числа
 }
 
 void sort_words(vector<string>& words,char comparison)
@@ -127,34 +123,30 @@ vector<string> get_numbers_from_string(vector<string> content)
 void sort_mixed_words_and_numbers(vector<string>& content,char comparison)
 {
     vector<string> numbers = get_numbers_from_string(content);
-    vector<pair<double,int>> numbers_with_index; // first numb second index
+    vector<pair<string,double>> string_and_numbers; // first (string with numbers) second (only numbers)
     //pair - структура данных которая хранит в себе
     // 2 любых типа данных в first и second
     
     for(int i = 0; i < numbers.size(); i++)
     {
-        numbers_with_index.push_back(make_pair<double,int>(stod(numbers[i]),int(i)));
+        string_and_numbers.push_back(make_pair<string,double>(string(content[i]),stod(numbers[i])));
         //stod(string to double) - конвертирует строку в double
         //make_pair - создает pair
     }
     
     if(comparison == DECREASE)
-        sort(numbers_with_index.begin(),numbers_with_index.end(),[](pair<double,int> f,pair<double,int> s) { return f.first > s.first; });
+        sort(string_and_numbers.begin(),string_and_numbers.end(),[](pair<string,double> f,pair<string,double> s) { return f.second > s.second; });
     else if(comparison == INCREASE)
-        sort(numbers_with_index.begin(),numbers_with_index.end(),[](pair<double,int> f,pair<double,int> s) { return f.first < s.first; });
+        sort(string_and_numbers.begin(),string_and_numbers.end(),[](pair<string,double> f,pair<string,double> s) { return f.second < s.second; });
     //sort - использует трехкратную гибридную технику сортировки под названием Introsort. 
     //Это комбинация быстрой сортировки , сортировки кучи и сортировки вставками.
     
-    vector<string> sorted;
-    for(int i = 0; i < numbers.size(); i++)
+    for(int i = 0; i < string_and_numbers.size(); i++)
     {
-        sorted.push_back(content[numbers_with_index[i].second]);
-        //добавляем в вектор sorted
-        //числа из оригинального вектора
-        //по отсортированным индексам
+        content[i] = string_and_numbers[i].first;
+        //изменяем орининальный vector
+        //на отсортированный
     }
-    content = sorted;
-    //присваиваем отсортированные строки
 }
 
 vector<string> concatenation_subvectors(vector<vector<string>> word_mix_numb)
